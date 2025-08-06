@@ -21,4 +21,4 @@ var users=[
 function getUsers(){
     return users
 }
-exports.us=getUsers;
+exports.get=getUsers;
