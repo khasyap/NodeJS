@@ -1,4 +1,4 @@
-var users=[
+var user=[
     {
         username:"khasyap",
         password:"kha123",
@@ -19,6 +19,6 @@ var users=[
     },
 ]
 function getUsers(){
-    return users
+    return user
 }
 exports.get=getUsers;
