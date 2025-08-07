@@ -1,6 +1,5 @@
 var http=require('http');
 var products=require('./product');
-const { json } = require('stream/consumers');
 var productList=products.get()
 const server=http.createServer((req,res)=>{
     res.writeHead(200,'content-type','text/JSON');
@@ -47,6 +46,10 @@ const server=http.createServer((req,res)=>{
           
           
         }
+    }
+    else if(req.url.startsWith("/products/")&& req.method=="GET"){
+        const price=parseInt(req.url.split('/')[2]);
+        res.end(JSON.stringify(productList.filter((i)=>i.productPrice>price)))
     }
     
 })

@@ -1,23 +1,19 @@
 var http = require('http');
 var username = require('./user');
 let userList = username.get();
-
 var server = http.createServer((req, res) => {
     res.writeHead(200,'Content-Type', 'application/json' );
-
- 
     if (req.url === '/login' && req.method === 'POST') {
         let body = "";
         req.on('data', chunk => {
             body += chunk;
         });
-
         req.on('end', () => {
             const { username, password } = JSON.parse(body);
             const user = userList.find(u => u.username === username );
             if(user){
               if(user.password==password){
-                res.end(JSON.stringify(`${username}login successful`))
+                res.end(JSON.stringify(`${username} login successful`))
               }
               else{
                 res.end(JSON.stringify("Incorrect Password"))
@@ -29,8 +25,6 @@ var server = http.createServer((req, res) => {
             
         });
     }
-
- 
     else if (req.url === '/register' && req.method === 'POST') {
         let newUser = "";
         req.on('data', chunk => {
@@ -49,10 +43,8 @@ var server = http.createServer((req, res) => {
             }
         });
     }
-
-
     else if (req.url === '/users' && req.method === 'GET') {
-        res.end(JSON.stringify(userList));
+        res.end(JSON.stringify(userList,null,2));
     }
     else if(req.url==='/update' && req.method==='PUT'){
        let body="";
@@ -87,15 +79,31 @@ var server = http.createServer((req, res) => {
             }
           })
     }
-
-  
+    else if(req.url==='/forgotten'&& req.method==='PUT'){
+        let pass="";
+        req.on('data',(chunk)=>{
+            pass+=chunk;
+        });
+        req.on('end',()=>{
+            const {username,password,newpass}=JSON.parse(pass);
+            const user=userList.find(u=>u.username==username)
+            if(user){
+                if (password === user.password) {
+                    user.password = newpass;
+                    res.end("Password updated successfully");
+                } else {
+                    res.end("Incorrect current password");
+                }
+            } else {
+                res.end("Invalid username");
+            }
+        })
+    }
     else {
         res.statusCode = 404;
         res.end(JSON.stringify("Route not found " ));
     }
 });
-
-
 const port = 4300;
 server.listen(port, () => {
     console.log(`server runing on http://localhost:${port}`);
